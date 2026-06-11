@@ -1,0 +1,7 @@
+# Force problematic installer/download domains through proxy
+DOMAIN-SUFFIX,dl.google.com
+DOMAIN-SUFFIX,dl.l.google.com
+DOMAIN,update.googleapis.com
+DOMAIN,clientservices.googleapis.com
+DOMAIN,get.microsoft.com
+DOMAIN-SUFFIX,apps.microsoft.com
