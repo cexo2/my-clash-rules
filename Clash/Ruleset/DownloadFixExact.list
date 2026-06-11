@@ -1,0 +1,7 @@
+# Exact-match overrides for problematic installer/download domains
+DOMAIN,dl.google.com
+DOMAIN,dl.l.google.com
+DOMAIN,update.googleapis.com
+DOMAIN,clientservices.googleapis.com
+DOMAIN,get.microsoft.com
+DOMAIN,apps.microsoft.com
