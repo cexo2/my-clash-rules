@@ -1,0 +1,13 @@
+# Supplements to the upstream OpenAI and Claude lists.
+# OpenAI source: https://help.openai.com/en/articles/9247338
+# Shared login/CDN domains also route here when used by other sites.
+DOMAIN-SUFFIX,claudeusercontent.com
+DOMAIN-SUFFIX,ct.sendgrid.net
+DOMAIN,cdn.openaimerge.com
+DOMAIN,cdn.workos.com
+DOMAIN,forwarder.workos.com
+DOMAIN,setup.workos.com
+DOMAIN,images.workoscdn.com
+DOMAIN,workos.imgix.net
+DOMAIN,humb.apple.com
+DOMAIN,rum.browser-intake-datadoghq.com

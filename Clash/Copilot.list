@@ -1,0 +1,22 @@
+# Copilot-specific subset of blackmatrix7/ios_rule_script Copilot.list.
+# OpenAI and shared AI services are handled by the dedicated group.
+# Do not route entire cloud-provider ASNs as Copilot traffic.
+DOMAIN,api.msn.com
+DOMAIN,assets.msn.com
+DOMAIN,gateway.bingviz.microsoft.net
+DOMAIN,gateway.bingviz.microsoftapp.net
+DOMAIN,in.appcenter.ms
+DOMAIN,location.microsoft.com
+DOMAIN,odc.officeapps.live.com
+DOMAIN,r.bing.com
+DOMAIN,self.events.data.microsoft.com
+DOMAIN,services.bingapis.com
+DOMAIN,sydney.bing.com
+DOMAIN,www.bing.com
+DOMAIN-SUFFIX,api.microsoftapp.net
+DOMAIN-SUFFIX,bing-shopping.microsoft-falcon.io
+DOMAIN-SUFFIX,edgeservices.bing.com
+DOMAIN-SUFFIX,copilot.microsoft.com
+DOMAIN-SUFFIX,copilot.cloud.microsoft
+DOMAIN-SUFFIX,githubcopilot.com
+DOMAIN,copilot-proxy.githubusercontent.com
