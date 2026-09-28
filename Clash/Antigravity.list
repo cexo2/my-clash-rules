@@ -1,0 +1,8 @@
+# Route through AI AFTER Antigravity-Auth.list.
+DOMAIN-SUFFIX,antigravity.google
+DOMAIN,generativelanguage.googleapis.com
+DOMAIN,antigravity-hub-auto-updater-974169037036.us-central1.run.app
+# Windows process fallback; language_server.exe also matches other apps
+# using that executable name. Authentication domain rules must come first.
+PROCESS-NAME,Antigravity.exe
+PROCESS-NAME,language_server.exe

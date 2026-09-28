@@ -1,0 +1,8 @@
+# Route through Claude 专属 before Antigravity process / general Google rules.
+# Cloud Code endpoints also carry API traffic, not only login requests.
+# Shared Google authentication domains affect sign-in from other applications.
+DOMAIN,cloudcode-pa.googleapis.com
+DOMAIN,daily-cloudcode-pa.googleapis.com
+DOMAIN,businessaicode.googleapis.com
+DOMAIN,oauth2.googleapis.com
+DOMAIN,accounts.google.com
