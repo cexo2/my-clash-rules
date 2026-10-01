@@ -1,5 +1,26 @@
 # my-clash-rules
 
+## 最小范围 Claude DNS 试用
+
+`Clash/GeneralClashConfig-DNS.yml` 仅新增五个 `nameserver-policy` 后缀：
+`anthropic.com`、`claude.ai`、`claude.com`、`claudeusercontent.com` 和
+检测域名 `d.ip.net.coffee`。本轮不调整路由规则或其他 DNS 字段。
+命中时，Mihomo 本地解析使用 Cloudflare / Google DoH，
+通过 URL 的 `#Claude 专属` 指定该代理组连接。
+共享认证、遥测及其他 AI 域名不在本轮保护范围内。
+
+用户在 Mac / Windows 更新使用本仓库基础配置的转换订阅后复测；
+如果客户端启用了自定义 DNS 覆写，需先检查实际生成的配置是否保留这些条目。
+Claude 专属节点不可用时，这些查询可能失败，影响仅限命中域名。
+其他应用查询相同域名也受影响；本轮不保证全机 DNS 不泄露。
+`fake-ip` 下部分代理连接会由代理服务器解析域名，此策略不控制服务器端 DNS；
+浏览器自行发起的安全 DNS 也不由这些域名策略直接控制。
+
+检测域名的策略用于单独测试，不应把检测页变绿当成所有 Claude 查询均受保护；
+也不要求公共 DNS 的递归解析服务器 IP 与代理出口 IP 完全相同。
+同步后检查真实 Claude 查询和测试域名的解析链路，再决定是否扩大范围。
+原有节点域名解析、直连 DNS、国内 / 局域网 DNS 和 YouTube / 游戏分流保留。
+
 ## Claude 优先级与出口检测
 
 整个规则列表的第一、第二条分别精确匹配 `api.anthropic.com` 和

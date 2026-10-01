@@ -24,6 +24,23 @@ dns:
     - "*.lan"
     - localhost.ptlogin2.qq.com
   nameserver-policy:
+    # Scoped DoH through the Claude group; other DNS settings stay unchanged.
+    "+.anthropic.com":
+      - "https://1.1.1.1/dns-query#Claude 专属"
+      - "https://8.8.8.8/dns-query#Claude 专属"
+    "+.claude.ai":
+      - "https://1.1.1.1/dns-query#Claude 专属"
+      - "https://8.8.8.8/dns-query#Claude 专属"
+    "+.claude.com":
+      - "https://1.1.1.1/dns-query#Claude 专属"
+      - "https://8.8.8.8/dns-query#Claude 专属"
+    "+.claudeusercontent.com":
+      - "https://1.1.1.1/dns-query#Claude 专属"
+      - "https://8.8.8.8/dns-query#Claude 专属"
+    # Diagnostic domains only; this test does not prove all DNS is protected.
+    "+.d.ip.net.coffee":
+      - "https://1.1.1.1/dns-query#Claude 专属"
+      - "https://8.8.8.8/dns-query#Claude 专属"
     www.baidu.com: 114.114.114.114
     "+.internal.crop.com": 10.0.0.1
     "geosite:cn": https://doh.pub/dns-query
