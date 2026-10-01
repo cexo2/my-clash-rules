@@ -11,3 +11,17 @@ DOMAIN,images.workoscdn.com
 DOMAIN,workos.imgix.net
 DOMAIN,humb.apple.com
 DOMAIN,rum.browser-intake-datadoghq.com
+
+# Claude supplement: https://ip.net.coffee/claude/site.html
+# Exact third-party hosts avoid routing entire CDN/telemetry providers here.
+DOMAIN-SUFFIX,clau.de
+DOMAIN-SUFFIX,claudemcpclient.com
+DOMAIN-SUFFIX,claudemcpcontent.com
+DOMAIN,anthropic.com.cdn.cloudflare.net
+DOMAIN,servd-anthropic-website.b-cdn.net
+DOMAIN,anthropic-com.ghost.io
+# Intentionally includes all Statsig API subdomains, including other apps' traffic.
+DOMAIN-SUFFIX,statsigapi.net
+# Optional Claude Code telemetry: https://code.claude.com/docs/en/network-config
+DOMAIN,browser-intake-us5-datadoghq.com
+DOMAIN,http-intake.logs.us5.datadoghq.com

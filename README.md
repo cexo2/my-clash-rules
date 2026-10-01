@@ -1,5 +1,40 @@
 # my-clash-rules
 
+## Claude 专属域名补充（2026-10-01）
+
+对照 https://ip.net.coffee/claude/site.html 和 Claude Code 官方网络文档，
+仅向 `Clash/AI-Dedicated-Supplement.list` 添加 9 条规则：
+
+- 后缀：`clau.de`、`claudemcpclient.com`、`claudemcpcontent.com`、`statsigapi.net`。
+- 精确域名：`anthropic.com.cdn.cloudflare.net`、
+  `servd-anthropic-website.b-cdn.net`、`anthropic-com.ghost.io`、
+  `browser-intake-us5-datadoghq.com`、`http-intake.logs.us5.datadoghq.com`。
+
+已有 Anthropic / Claude 核心域名及引用规则覆盖的认证、Sentry、Intercom、
+Fathom 等不重复添加。未添加全局 NTP、遥测关键词、IP 网段或 ASN 兜底。
+INI 引用顺序、代理组、DNS、节点 UDP 选项和本地脚本均不因此改变。
+
+影响与边界：
+
+- 原先命中国外媒体的 Claude MCP 域名及上述三个 CDN / 官网域名，
+  在没有更早进程规则命中时改走 Claude 专属；其余新增目标也优先走该组。
+- `statsigapi.net` 包含所有子域；两个 Datadog 精确地址也可能被其他应用使用。
+  访问相同目标的其他应用会一起改道，不保证仅影响 Claude 进程。
+  `events.statsigapi.net` 原本已走 Claude 专属，出口策略保持一致。
+- 保留前面的 `Antigravity.exe` / `language_server.exe` 进程规则：
+  这些进程访问新增目标时仍优先走 AI。不会为了覆盖它们而调整原有优先级。
+- 新增规则位于 AdsPower 进程规则之前，因此 AdsPower 访问这些特定目标时
+  也走 Claude 专属，其他目标继续按原有规则。
+
+验证时成功读取了 INI 引用的全部 29 个规则清单；新增 9 个目标均在
+不带进程条件的域名匹配测试中进入 Claude 专属。对旧清单域名、代表性子域
+及五种进程场景进行了 78,775 组非新增目标的前后匹配比较，结果一致。
+这是静态域名 / 进程检查，不包含实时 IP 解析、GEOIP / ASN 查询、节点性能
+或 Mac / Windows 实际运行验证。远程上游规则今后仍可能变化。
+
+由用户在各设备更新使用此 INI 的转换订阅后生效；本次仓库更新不会替用户
+刷新本地配置，也不需要添加本地脚本。
+
 ## WebRTC / STUN 分流
 
 `Clash/rules-dns-fixed.ini` 将 `stun.cloudflare.com`、`stun.voipstunt.com`、
