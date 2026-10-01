@@ -1,5 +1,35 @@
 # my-clash-rules
 
+## Claude 优先级与出口检测
+
+整个规则列表的第一、第二条分别精确匹配 `api.anthropic.com` 和
+`claude.ai`，均指向 Claude 专属，先于 STUN、进程、通配及通用规则。
+这两条即使后面的上游规则集更新或缺失，也不依赖其内容匹配核心目标。
+
+Claude 核心规则、`AI-Dedicated-Supplement.list`、验证域名现在位于
+`Antigravity.list` 的 AI 进程兜底之前。即使请求来自 `Antigravity.exe` 或
+`language_server.exe`，命中这些目标时也优先走 Claude 专属；
+未命中的 Antigravity / Gemini / Copilot 请求仍按原有 AI 规则处理。
+Clash 分组在界面上的显示顺序和检测网站的 “AI” 标签不代表匹配优先级。
+OpenAI 上游规则的原有位置保持不变，不把其中的 IP / ASN 规则整体前移。
+
+为统一 Claude 检测页面左侧与 Claude 的出口，新增：
+
+- `DOMAIN,2026.ip138.com`：左侧 IP 检测的首选请求。
+- `DOMAIN,my.ip.cn`：左侧 IP 检测的备用请求。
+
+两者均走 Claude 专属，其他应用访问这两个域名也会受影响。
+按用户要求暂不调整 DNS：没有添加 `1.1.1.1` 整地址规则，
+因为它也可能改变 DNS 流量；中间 Cloudflare 检测仍沿用原有分流，
+本次不保证其与 Claude 出口一致。DNS 配置文件保持原样。
+原有节点选择 / 地区测速、YouTube、游戏等规则和代理组定义保持不变。
+其他网站仍可能使用不同出口，不把整个出口检测表的所有服务都归入 Claude。
+同一节点的服务端也可能有多出口，以用户同步后的实测为准；
+网页请求超时或浏览器拦截不会因为此分流调整就必然消失。
+
+用户自行在 Mac / Windows 更新转换订阅，并保持 Claude 专属选择同一具体节点。
+本次修改不刷新本地 Clash，也不添加本地脚本。
+
 ## Claude 专属域名补充（2026-10-01）
 
 对照 https://ip.net.coffee/claude/site.html 和 Claude Code 官方网络文档，
@@ -21,8 +51,8 @@ INI 引用顺序、代理组、DNS、节点 UDP 选项和本地脚本均不因�
 - `statsigapi.net` 包含所有子域；两个 Datadog 精确地址也可能被其他应用使用。
   访问相同目标的其他应用会一起改道，不保证仅影响 Claude 进程。
   `events.statsigapi.net` 原本已走 Claude 专属，出口策略保持一致。
-- 保留前面的 `Antigravity.exe` / `language_server.exe` 进程规则：
-  这些进程访问新增目标时仍优先走 AI。不会为了覆盖它们而调整原有优先级。
+- 后续按用户要求调整了优先级：这些补充域名现在先于
+  `Antigravity.exe` / `language_server.exe` 进程规则匹配，见上节。
 - 新增规则位于 AdsPower 进程规则之前，因此 AdsPower 访问这些特定目标时
   也走 Claude 专属，其他目标继续按原有规则。
 
@@ -69,9 +99,10 @@ IP 规则仅匹配这两个公网地址，不按整个 UDP 协议或通用端口
 
 `Clash/rules-dns-fixed.ini` 使用以下分流顺序：
 
-1. `Antigravity-Auth.list` → **Claude 专属**：Cloud Code、Business AI Code、Google OAuth 和账号登录。
-2. `Antigravity.list` → **AI**：Antigravity 域名、生成式 API、更新服务，以及 Windows 进程兜底。
-3. 原有 Google 通用规则及其他规则。
+1. 出口检测、STUN、`Antigravity-Auth.list` → **Claude 专属**。
+2. Claude 核心规则、专属补充及验证域名 → **Claude 专属**，优先于进程兜底。
+3. `Antigravity.list` → **AI**：其余 Antigravity 域名、生成式 API、更新服务，以及 Windows 进程兜底。
+4. 原有 Google 通用规则及其他规则。
 
 Cloud Code 域名上的所有请求都走 Claude 专属，包括登录后的 API 请求；
 按域名分流无法只区分其中的登录请求。
