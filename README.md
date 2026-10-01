@@ -1,5 +1,28 @@
 # my-clash-rules
 
+## WebRTC / STUN 分流
+
+`Clash/rules-dns-fixed.ini` 将 `stun.cloudflare.com`、
+`stun.l.google.com`、`stun1.l.google.com` 至 `stun4.l.google.com`，
+以及检测中出现的 `77.72.169.212/32`、`162.159.207.0/32` 优先分配给
+**Claude 专属**，与现有 OpenAI / Claude 规则共用代理组。
+IP 规则仅匹配这两个公网地址，不按整个 UDP 协议或通用端口分流。
+这些共享 STUN 目标被其他应用使用时也会走该组。
+
+使用方式：
+
+1. 更新使用此 INI 的转换订阅，保持 TUN 开启、规则模式。
+2. 在 **Claude 专属** 中选择已验证支持 UDP 的具体节点。
+   如需 AI 服务也使用同一出口，在 **AI** 中手动选择同一节点；
+   两个分组仍独立选择，不会自动同步。
+3. 关闭旧检测标签页及旧 STUN 连接后复测，确认新连接链路为 Claude 专属，
+   且检测不到本地公网 IPv4 / IPv6。
+
+这不是完整的 WebRTC 防泄露保证：其他 STUN 服务器、自定义端口和对等连接
+不在这些精确规则的覆盖范围内。相同节点也可能对 TCP / UDP 使用不同出口，
+最终应以实际检测为准。若新连接仍显示 DIRECT，检查客户端实际生成的规则、
+本地覆写和节点 UDP 支持；仅更新本仓库不会自动刷新客户端的运行配置。
+
 ## Antigravity 分流
 
 `Clash/rules-dns-fixed.ini` 使用以下分流顺序：
