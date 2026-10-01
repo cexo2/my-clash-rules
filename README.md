@@ -2,7 +2,7 @@
 
 ## WebRTC / STUN 分流
 
-`Clash/rules-dns-fixed.ini` 将 `stun.cloudflare.com`、
+`Clash/rules-dns-fixed.ini` 将 `stun.cloudflare.com`、`stun.voipstunt.com`、
 `stun.l.google.com`、`stun1.l.google.com` 至 `stun4.l.google.com`，
 以及检测中出现的 `77.72.169.212/32`、`162.159.207.0/32` 优先分配给
 **Claude 专属**，与现有 OpenAI / Claude 规则共用代理组。
@@ -22,6 +22,13 @@ IP 规则仅匹配这两个公网地址，不按整个 UDP 协议或通用端口
 不在这些精确规则的覆盖范围内。相同节点也可能对 TCP / UDP 使用不同出口，
 最终应以实际检测为准。若新连接仍显示 DIRECT，检查客户端实际生成的规则、
 本地覆写和节点 UDP 支持；仅更新本仓库不会自动刷新客户端的运行配置。
+
+排查时还应检查内核 `/proxies` 接口返回的节点及分组 `udp` 标记。
+2026-10-01 实测发现所选 VLESS 节点标记为 `udp: false`，尽管 STUN 域名规则
+已经加载，规则模式下请求仍直连。在当前订阅扩展脚本中为该具体节点设置
+`udp: true` 并重载后，Cloudflare 和 Voipstunt 的 STUN 请求均经 Claude 专属
+返回同一代理出口。该节点开关属于客户端/订阅节点配置，本 INI 的域名规则
+不会自动开启它；不能将一次测试结果推广为所有节点均支持 UDP。
 
 ## Antigravity 分流
 
