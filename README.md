@@ -120,15 +120,20 @@ IP 规则仅匹配这两个公网地址，不按整个 UDP 协议或通用端口
 
 `Clash/rules-dns-fixed.ini` 使用以下分流顺序：
 
-1. 出口检测、STUN、`Antigravity-Auth.list` → **Claude 专属**。
+1. 出口检测、STUN → **Claude 专属**；`accounts.google.com` → **节点选择**；
+   `Antigravity-Auth.list` 中的 Cloud Code / Google OAuth → **Claude 专属**。
 2. Claude 核心规则、专属补充及验证域名 → **Claude 专属**，优先于进程兜底。
 3. `Antigravity.list` → **AI**：其余 Antigravity 域名、生成式 API、更新服务，以及 Windows 进程兜底。
 4. 原有 Google 通用规则及其他规则。
 
 Cloud Code 域名上的所有请求都走 Claude 专属，包括登录后的 API 请求；
 按域名分流无法只区分其中的登录请求。
-`accounts.google.com` 和 `oauth2.googleapis.com` 是共享认证域名，
-其他应用访问它们也会走 Claude 专属。
+`accounts.google.com` 是共享账号登录域名，改为走节点选择，与 Google 首页使用同一分组；
+这也会影响 Claude / Antigravity 等应用打开的 Google 登录页面。
+`oauth2.googleapis.com` 仍走 Claude 专属，其他应用访问它也会受影响。
+本次不改变 Claude 核心域名、Cloud Code、Google OAuth、STUN 或 DNS 配置。
+更新转换订阅后，确认生成的首条 `accounts.google.com` 规则指向节点选择，
+再复测 Google 登录和账号菜单；分流调整不保证节点本身始终可用。
 进程兜底使用 `Antigravity.exe` 和 `language_server.exe`；
 其他软件使用同名 `language_server.exe` 时也会匹配 AI。
 
