@@ -1,4 +1,4 @@
 # Shared Google OAuth stays on Claude 专属 before process / general Google rules.
-# Antigravity API domains are in Antigravity.list and route through AI.
+# Antigravity API domains route through AI via exact rules in rules-dns-fixed.ini.
 # accounts.google.com and ogs.google.com are routed separately.
 DOMAIN,oauth2.googleapis.com
