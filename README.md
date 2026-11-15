@@ -1,5 +1,23 @@
 # my-clash-rules
 
+## Google 登录连接修复（2026-11-15）
+
+`Clash/GeneralClashConfig-DNS.yml` 为 `accounts.google.com` 添加临时
+`hosts` 覆盖：`74.125.137.84`，保留原来的节点选择规则和其他 DNS 配置。
+用于绕过代理出口按域名连接 Google 登录时的异常；不改变 Claude、
+Antigravity 或其他服务的策略组，也不关闭 TLS 证书验证。
+
+该域名被所有 Google 登录流程共用，因此不仅影响 Antigravity。
+这不是长期固定 IP 的方案；地址失效时需要重新验证并更新或删除此覆盖。
+用户更新使用 `Clash/rules-dns-fixed.ini` 的转换订阅后生效，
+若客户端存在 DNS / hosts 覆写，需确认最终运行配置保留此条目。
+仅更新远程规则清单而不重新生成完整订阅，不会加载基础配置的变化。
+
+本机独立 Mihomo 内核对照测试：同一日本高速04节点及相同节点入口 IP，
+无覆盖时 Google 登录 TLS 连接中断，添加覆盖后返回正常的 HTTP 302，
+TLS 证书验证通过。测试未修改正在使用的 VPN 配置，也未完成账号登录；
+转换服务是否保留该字段及其他设备效果仍需更新订阅后检查。
+
 ## 最小范围 Claude DNS 试用
 
 `Clash/GeneralClashConfig-DNS.yml` 仅新增五个 `nameserver-policy` 后缀：
