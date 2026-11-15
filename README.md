@@ -1,22 +1,35 @@
 # my-clash-rules
 
-## Google 登录连接修复（2026-11-15）
+## Google 账号按服务可用性分流（2026-11-15）
 
-`Clash/GeneralClashConfig-DNS.yml` 为 `accounts.google.com` 添加临时
-`hosts` 覆盖：`74.125.137.84`，保留原来的节点选择规则和其他 DNS 配置。
-用于绕过代理出口按域名连接 Google 登录时的异常；不改变 Claude、
-Antigravity 或其他服务的策略组，也不关闭 TLS 证书验证。
+删除此前为 `accounts.google.com` 添加的临时固定 IP 覆盖，不固定 Google
+目标 IP，也不修改 DNS 字段或关闭 TLS 证书验证。
+`accounts.google.com` 和头像菜单依赖的 `ogs.google.com` 改走新增的
+**谷歌账号** fallback 组，其他域名及原有代理组保持不变。
 
-该域名被所有 Google 登录流程共用，因此不仅影响 Antigravity。
-这不是长期固定 IP 的方案；地址失效时需要重新验证并更新或删除此覆盖。
-用户更新使用 `Clash/rules-dns-fixed.ini` 的转换订阅后生效，
-若客户端存在 DNS / hosts 覆写，需确认最终运行配置保留此条目。
-仅更新远程规则清单而不重新生成完整订阅，不会加载基础配置的变化。
+该组以 `https://accounts.google.com/ServiceLogin` 进行每 300 秒的可用性检查，
+优先订阅中的洛杉矶流媒体节点，其余订阅节点作为备用，不加入 DIRECT。
+fallback 使用按顺序找到的可用节点，而不是仅按通用测速延迟选节点。
+这两个域名由多个 Google 产品共用，因此会影响其他产品的 Google 登录和
+账号组件；账号出口可能与 Google 首页不同，故障切换时账号出口也可能变化。
+Google 首页、Google OAuth / Cloud Code、Claude、OpenAI、YouTube 等分流不改。
 
-本机独立 Mihomo 内核对照测试：同一日本高速04节点及相同节点入口 IP，
-无覆盖时 Google 登录 TLS 连接中断，添加覆盖后返回正常的 HTTP 302，
-TLS 证书验证通过。测试未修改正在使用的 VPN 配置，也未完成账号登录；
-转换服务是否保留该字段及其他设备效果仍需更新订阅后检查。
+排查确认：部分日本 / 新加坡等节点访问 Google 首页正常，但按域名访问
+Google 登录连接中断；两个洛杉矶流媒体节点按域名访问登录成功，其中
+洛杉矶01访问 `ogs.google.com` 也成功。单独固定登录 IP 不能解决账号组件。
+这说明通用测速的可用性不能代表账号服务可用；没有代理服务端日志，
+不能进一步断言是其 DNS 解析、域名拦截还是服务端路由规则。
+
+独立 Mihomo 测试没有设置 Google hosts：将已知故障的日本高速04放在
+候选首位后，fallback 自动选择可用的洛杉矶01；登录完整跳转链返回 HTTP 200，
+账号组件入口返回 HTTP 302，两者 TLS 验证通过。这是未登录的网络连通性测试，
+已登录头像菜单仍需用户更新订阅后复测。
+
+健康检查仅覆盖登录地址，不保证账号组件每个接口均可用，也不能绕过账号
+权限或地区限制。所有候选节点不可用时，fallback 会退回首个候选，并不代表
+该节点已经恢复；这时需要检查节点服务商，而不是重新固定 Google IP。
+用户更新使用 `Clash/rules-dns-fixed.ini` 的完整转换订阅后生效。
+仅更新规则集不够；如有本地覆写，需确认最终配置没有旧的 Google hosts 条目。
 
 ## 最小范围 Claude DNS 试用
 
@@ -138,7 +151,8 @@ IP 规则仅匹配这两个公网地址，不按整个 UDP 协议或通用端口
 
 `Clash/rules-dns-fixed.ini` 使用以下分流顺序：
 
-1. 出口检测、STUN → **Claude 专属**；`accounts.google.com` → **节点选择**；
+1. 出口检测、STUN → **Claude 专属**；
+   `accounts.google.com` / `ogs.google.com` → **谷歌账号**；
    `Antigravity-Auth.list` 中的 Cloud Code / Google OAuth → **Claude 专属**。
 2. Claude 核心规则、专属补充及验证域名 → **Claude 专属**，优先于进程兜底。
 3. `Antigravity.list` → **AI**：其余 Antigravity 域名、生成式 API、更新服务，以及 Windows 进程兜底。
@@ -146,11 +160,12 @@ IP 规则仅匹配这两个公网地址，不按整个 UDP 协议或通用端口
 
 Cloud Code 域名上的所有请求都走 Claude 专属，包括登录后的 API 请求；
 按域名分流无法只区分其中的登录请求。
-`accounts.google.com` 是共享账号登录域名，改为走节点选择，与 Google 首页使用同一分组；
+`accounts.google.com` 是共享账号登录域名，和头像菜单的 `ogs.google.com`
+一起走谷歌账号组，以实际登录地址检查节点可用性，不再跟随 Google 首页的分组；
 这也会影响 Claude / Antigravity 等应用打开的 Google 登录页面。
 `oauth2.googleapis.com` 仍走 Claude 专属，其他应用访问它也会受影响。
 本次不改变 Claude 核心域名、Cloud Code、Google OAuth、STUN 或 DNS 配置。
-更新转换订阅后，确认生成的首条 `accounts.google.com` 规则指向节点选择，
+更新转换订阅后，确认生成的首条 `accounts.google.com` 规则指向谷歌账号，
 再复测 Google 登录和账号菜单；分流调整不保证节点本身始终可用。
 进程兜底使用 `Antigravity.exe` 和 `language_server.exe`；
 其他软件使用同名 `language_server.exe` 时也会匹配 AI。

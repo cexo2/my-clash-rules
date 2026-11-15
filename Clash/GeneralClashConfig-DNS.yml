@@ -8,11 +8,6 @@ mode: rule
 log-level: info
 external-controller: 127.0.0.1:9090
 
-# Temporary workaround for proxy-side Google sign-in domain resolution.
-# Revalidate this address if Google sign-in stops working.
-hosts:
-  accounts.google.com: 74.125.137.84
-
 dns:
   enable: true
   listen: 0.0.0.0:1053
