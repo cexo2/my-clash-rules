@@ -1,4 +1,7 @@
 # Route through AI AFTER Antigravity-Auth.list.
+DOMAIN,cloudcode-pa.googleapis.com
+DOMAIN,daily-cloudcode-pa.googleapis.com
+DOMAIN,businessaicode.googleapis.com
 DOMAIN-SUFFIX,antigravity.google
 DOMAIN,generativelanguage.googleapis.com
 DOMAIN,antigravity-hub-auto-updater-974169037036.us-central1.run.app

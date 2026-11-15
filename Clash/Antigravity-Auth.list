@@ -1,7 +1,4 @@
-# Route through Claude 专属 before Antigravity process / general Google rules.
-# Cloud Code endpoints also carry API traffic, not only login requests.
-# Shared Google OAuth remains dedicated; accounts.google.com is routed separately.
-DOMAIN,cloudcode-pa.googleapis.com
-DOMAIN,daily-cloudcode-pa.googleapis.com
-DOMAIN,businessaicode.googleapis.com
+# Shared Google OAuth stays on Claude 专属 before process / general Google rules.
+# Antigravity API domains are in Antigravity.list and route through AI.
+# accounts.google.com and ogs.google.com are routed separately.
 DOMAIN,oauth2.googleapis.com
