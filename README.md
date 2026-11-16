@@ -159,18 +159,22 @@ IP 规则仅匹配这两个公网地址，不按整个 UDP 协议或通用端口
 
 1. 出口检测、STUN → **Claude 专属**；
    `accounts.google.com` / `ogs.google.com` → **谷歌账号**；
-   `Antigravity-Auth.list` 中的 Cloud Code / Google OAuth → **Claude 专属**。
+   Cloud Code / AI Code API 精确域名 → **AI**；
+   `Antigravity-Auth.list` 中的共享 Google OAuth → **Claude 专属**。
 2. Claude 核心规则、专属补充及验证域名 → **Claude 专属**，优先于进程兜底。
 3. `Antigravity.list` → **AI**：其余 Antigravity 域名、生成式 API、更新服务，以及 Windows 进程兜底。
 4. 原有 Google 通用规则及其他规则。
 
-Cloud Code 域名上的所有请求都走 Claude 专属，包括登录后的 API 请求；
-按域名分流无法只区分其中的登录请求。
+`cloudcode-pa.googleapis.com`、`daily-cloudcode-pa.googleapis.com`、
+`businessaicode.googleapis.com` 和 `aicode.googleapis.com` 的所有请求均走 AI，
+包括登录后的 API 请求；按域名分流无法只区分其中的登录请求。
+2026-11-16 补充 `aicode.googleapis.com`，避免 agy 的 AI Code 请求落入通用 Google 分流。
+仅修复域名规则遗漏，不保证解决 Google 地区资格拒绝，也不覆盖未识别域名的 IPv6 连接。
 `accounts.google.com` 是共享账号登录域名，和头像菜单的 `ogs.google.com`
 一起走谷歌账号组，按与节点选择相同的菜单手动选择地区或已有手动切换组；
 这也会影响 Claude / Antigravity 等应用打开的 Google 登录页面。
 `oauth2.googleapis.com` 仍走 Claude 专属，其他应用访问它也会受影响。
-本次不改变 Claude 核心域名、Cloud Code、Google OAuth、STUN 或 DNS 配置。
+本次不改变 Claude 核心域名、Google OAuth、STUN 或 DNS 配置。
 更新转换订阅后，确认生成的首条 `accounts.google.com` 规则指向谷歌账号，
 再复测 Google 登录和账号菜单；分流调整不保证节点本身始终可用。
 进程兜底使用 `Antigravity.exe` 和 `language_server.exe`；
