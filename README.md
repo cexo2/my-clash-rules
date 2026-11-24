@@ -1,5 +1,25 @@
 # my-clash-rules
 
+## Google 登录与 Antigravity 统一到 AI（2026-11-24）
+
+本节取代下方历史记录中 Google 登录走“谷歌账号”、OAuth 走“Claude 专属”的说明。
+`accounts.google.com`、`ogs.google.com` 和 `oauth2.googleapis.com` 统一走
+现有 **AI** 组，与已有 Cloud Code / AI Code、Antigravity 接口使用同一分组选择。
+OAuth 仅由 `Antigravity-Auth.list` 定义一次，删除重复的内联规则。
+这些是共享 Google 域名，其他应用访问它们也会改走 AI。
+
+不新增或修改代理组；原“谷歌账号”组保留，但不再负责上述两个登录域名。
+AI 仍为手动选择具体节点，不增加 DIRECT 或自动地区切换选项。
+Claude / OpenAI、STUN、共享验证域名的原有优先级不变；
+因此不是所有 Antigravity 进程请求都无条件走 AI，命中更早 Claude 专属规则的仍走该组。
+DNS、TUN、国内网站和其他服务分流不变。
+
+更新使用 `Clash/rules-dns-fixed.ini` 的完整转换订阅后，检查生成配置：
+三个登录 / OAuth 域名应均指向 AI，OAuth 规则仅出现一次，并在 AI 中选择所需具体节点。
+仅更新规则清单不足以改变 INI 的组归属；需留意订阅转换服务缓存及本地覆写。
+本次不刷新本地订阅，不验证实际出口或断线阻断，不保证改变 Google 账号地区，
+也不构成全机防直连保障。真实出口与客户端断线行为仍需另行验证。
+
 ## Google 账号改为节点选择菜单（2026-11-15）
 
 删除此前为 `accounts.google.com` 添加的临时固定 IP 覆盖，不固定 Google
